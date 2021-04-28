@@ -6,6 +6,8 @@
 //#include <bits/stdc++.h>
 using namespace std;
 
+const double eps = 0.0001;
+
 namespace ariel {
     class NumberWithUnits {
         static inline map<string,map<string,double>> get_unit;
@@ -58,6 +60,16 @@ namespace ariel {
         friend bool operator<=(const NumberWithUnits& a1, const NumberWithUnits& a2);
         friend bool operator==(const NumberWithUnits& a1, const NumberWithUnits& a2);
         friend bool operator!=(const NumberWithUnits& a1, const NumberWithUnits& a2);
+        bool operator==(const NumberWithUnits& a2) {
+        if (NumberWithUnits::get_unit.count(this->unit)!=0&&NumberWithUnits::get_unit[this->unit].count(a2.unit)!=0) {
+            double a2_new_amount = a2.amount*NumberWithUnits::get_unit[a2.unit][this->unit];
+            return (abs(this->amount-a2_new_amount)<=eps);
+            //return (a1.amount==a2_new_amount);
+        }
+        stringstream ss;
+        ss << "Units do not match - [" << this->unit << "] cannot be converted to [" << a2.unit <<"]";
+        throw invalid_argument(ss.str());
+    }
         /* ++/-- operators */
         NumberWithUnits& operator++() { // prefix increment
             this->amount++;
